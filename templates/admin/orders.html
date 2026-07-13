@@ -1,0 +1,81 @@
+{% extends 'admin/layout.html' %}
+{% set active = 'orders' %}
+{% block admin_content %}
+
+<div class="mb-8">
+    <h1 class="text-3xl font-bold text-white">Orders</h1>
+    <p class="text-white/40 text-sm mt-1">Lahat ng orders mula sa lahat ng customers.</p>
+</div>
+
+{% if orders %}
+<div class="space-y-4">
+    {% for order in orders %}
+    <div class="bg-[#0B0806]/60 border border-white/5 rounded-3xl p-6">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+
+            <div class="flex items-center gap-4">
+                <div class="w-11 h-11 rounded-2xl bg-[#C09668]/10 flex items-center justify-center text-[#C09668] shrink-0">
+                    <i class="fa-solid fa-mug-hot"></i>
+                </div>
+                <div>
+                    <p class="text-white/40 text-xs uppercase tracking-widest font-bold">Order #{{ order.id }}</p>
+                    <h3 class="text-white font-bold">{{ order.product_name }} <span class="text-white/40 font-normal">x{{ order.quantity }}</span></h3>
+                    {% if order.customer_name %}
+                    <p class="text-white/40 text-xs mt-0.5">{{ order.customer_name }}{% if order.contact_number %} · {{ order.contact_number }}{% endif %}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <span class="text-white font-bold">₱{{ "%.2f"|format(order.total) }}</span>
+
+                {% if order.status == 'Completed' %}
+                    <span class="px-4 py-2 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-bold uppercase tracking-wider border border-emerald-500/20">Completed</span>
+                {% elif order.status == 'Cancelled' %}
+                    <span class="px-4 py-2 rounded-full bg-white/5 text-white/40 text-xs font-bold uppercase tracking-wider border border-white/10">Cancelled</span>
+                {% elif order.status == 'Preparing' %}
+                    <span class="px-4 py-2 rounded-full bg-sky-500/10 text-sky-400 text-xs font-bold uppercase tracking-wider border border-sky-500/20">Preparing</span>
+                {% else %}
+                    <span class="px-4 py-2 rounded-full bg-amber-500/10 text-amber-400 text-xs font-bold uppercase tracking-wider border border-amber-500/20">Pending</span>
+                {% endif %}
+            </div>
+
+        </div>
+
+        {% if order.status not in ['Completed', 'Cancelled'] %}
+        <div class="flex flex-wrap gap-2 mt-4 pt-4 border-t border-white/5">
+
+            {% if order.status == 'Pending' %}
+            <a href="{{ url_for('admin_update_order_status', order_id=order.id, status='Preparing') }}"
+               class="text-xs font-bold uppercase tracking-wider bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 px-4 py-2 rounded-xl transition">
+                Mark as Preparing
+            </a>
+            {% endif %}
+
+            {% if order.status == 'Preparing' %}
+            <a href="{{ url_for('admin_update_order_status', order_id=order.id, status='Completed') }}"
+               class="text-xs font-bold uppercase tracking-wider bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 px-4 py-2 rounded-xl transition">
+                Mark as Completed
+            </a>
+            {% endif %}
+
+            <a href="{{ url_for('admin_update_order_status', order_id=order.id, status='Cancelled') }}"
+               onclick="return confirm('Cancel order #{{ order.id }}?');"
+               class="text-xs font-bold uppercase tracking-wider bg-red-500/10 hover:bg-red-500/20 text-red-400 px-4 py-2 rounded-xl transition">
+                Cancel Order
+            </a>
+
+        </div>
+        {% endif %}
+
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="text-center py-20 bg-[#0B0806]/60 border border-white/5 rounded-[2rem]">
+    <i class="fa-solid fa-receipt text-5xl text-white/10 mb-4"></i>
+    <h2 class="text-white font-bold text-xl">Wala pang orders</h2>
+</div>
+{% endif %}
+
+{% endblock %}

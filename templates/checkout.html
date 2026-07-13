@@ -1,0 +1,231 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+    /* (added) stop the browser's autofill background from overriding
+       the dark input theme on this page */
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus,
+    select:-webkit-autofill,
+    select:-webkit-autofill:hover,
+    select:-webkit-autofill:focus {
+        -webkit-text-fill-color: #ffffff;
+        -webkit-box-shadow: 0 0 0px 1000px #0B0806 inset;
+        box-shadow: 0 0 0px 1000px #0B0806 inset;
+        transition: background-color 9999s ease-in-out 0s;
+        caret-color: #ffffff;
+    }
+</style>
+
+<div class="max-w-2xl mx-auto px-6 py-12">
+
+    <!-- BACK LINK -->
+    <a href="{{ url_for('cart') }}" class="inline-flex items-center gap-2 text-white/40 hover:text-[#C09668] text-sm font-semibold transition mb-6">
+        <i class="fa-solid fa-arrow-left text-xs"></i>
+        Back to Cart
+    </a>
+
+    <!-- PROGRESS STEPS -->
+    <div class="flex items-center justify-center gap-3 mb-10">
+        <div class="flex items-center gap-2">
+            <div class="w-7 h-7 rounded-full bg-[#C09668] text-[#0B0806] text-xs font-bold flex items-center justify-center">
+                <i class="fa-solid fa-check"></i>
+            </div>
+            <span class="text-xs font-semibold text-white/50">Cart</span>
+        </div>
+        <div class="w-8 h-px bg-[#C09668]"></div>
+        <div class="flex items-center gap-2">
+            <div class="w-7 h-7 rounded-full bg-[#C09668] text-[#0B0806] text-xs font-bold flex items-center justify-center">2</div>
+            <span class="text-xs font-semibold text-white">Checkout</span>
+        </div>
+        <div class="w-8 h-px bg-white/10"></div>
+        <div class="flex items-center gap-2">
+            <div class="w-7 h-7 rounded-full bg-white/5 text-white/30 text-xs font-bold flex items-center justify-center">3</div>
+            <span class="text-xs font-semibold text-white/30">Confirm</span>
+        </div>
+    </div>
+
+    <div class="text-center mb-10">
+        <h1 class="text-4xl font-extrabold text-white mb-2">Checkout</h1>
+        <p class="text-white/40">Review your order and confirm your details.</p>
+    </div>
+
+    <!-- ORDER SUMMARY -->
+    <div class="bg-[#1A1714]/60 backdrop-blur-xl border border-white/10 rounded-[2.5rem] p-8 mb-8 shadow-2xl">
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-xs font-bold text-[#C09668] uppercase tracking-widest">Order Summary</h2>
+            <a href="{{ url_for('cart') }}" class="text-xs font-semibold text-white/30 hover:text-white transition">Edit</a>
+        </div>
+
+        <div class="space-y-4">
+            {% for item in cart %}
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-xl overflow-hidden bg-white/5 border border-white/5 shrink-0">
+                    <img src="{{ image_url(item.image) }}" class="w-full h-full object-cover">
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="font-medium text-white truncate">{{ item.name }}</p>
+                    <p class="text-white/40 text-xs">Qty: {{ item.quantity }} · ₱{{ "%.2f"|format(item.price) }} each</p>
+                </div>
+                <span class="font-mono text-white">₱{{ "%.2f"|format(item.price * item.quantity) }}</span>
+            </div>
+            {% endfor %}
+        </div>
+
+        <hr class="my-6 border-white/5">
+        
+        <div class="flex justify-between items-center">
+            <span class="text-lg text-white/60">Total Amount</span>
+            <span class="text-3xl font-bold text-[#C09668]">₱{{ "%.2f"|format(total) }}</span>
+        </div>
+    </div>
+
+    <!-- FORM -->
+    <form action="{{ url_for('place_order') }}" method="POST" class="bg-[#1A1714]/40 backdrop-blur-lg border border-white/5 rounded-[2.5rem] p-8">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <h2 class="text-lg font-bold text-white mb-6">Delivery Details</h2>
+        
+        <div class="space-y-5">
+            <!-- Full Name (Editable) -->
+            <div>
+                <label class="text-[10px] uppercase font-bold text-white/30 ml-2 tracking-widest">Full Name</label>
+                <div class="relative mt-1">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-white/25">
+                        <i class="fa-solid fa-user text-sm"></i>
+                    </span>
+                    <input type="text" name="fullname" value="{{ session.get('fullname') }}" required
+                        class="w-full bg-[#0B0806] border border-white/10 rounded-2xl p-4 pl-11 text-white focus:border-[#C09668] outline-none transition-all">
+                </div>
+            </div>
+
+            <!-- Order Type (segmented buttons, matches Payment Method style below) -->
+            <div>
+                <label class="text-[10px] uppercase font-bold text-white/30 ml-2 tracking-widest mb-2 block">Order Type</label>
+                <div class="grid grid-cols-3 gap-3">
+
+                    <label class="cursor-pointer">
+                        <input type="radio" name="order_type" value="Dine In" class="peer hidden" onchange="tkToggleAddress()">
+                        <div class="flex flex-col items-center gap-2 p-4 rounded-2xl border border-white/10 bg-[#0B0806] text-white/50 peer-checked:border-[#C09668] peer-checked:text-[#C09668] peer-checked:bg-[#C09668]/10 transition-all">
+                            <i class="fa-solid fa-utensils text-lg"></i>
+                            <span class="text-xs font-semibold">Dine In</span>
+                        </div>
+                    </label>
+
+                    <label class="cursor-pointer">
+                        <input type="radio" name="order_type" value="Take Out" class="peer hidden" onchange="tkToggleAddress()">
+                        <div class="flex flex-col items-center gap-2 p-4 rounded-2xl border border-white/10 bg-[#0B0806] text-white/50 peer-checked:border-[#C09668] peer-checked:text-[#C09668] peer-checked:bg-[#C09668]/10 transition-all">
+                            <i class="fa-solid fa-bag-shopping text-lg"></i>
+                            <span class="text-xs font-semibold">Take Out</span>
+                        </div>
+                    </label>
+
+                    <label class="cursor-pointer">
+                        <input type="radio" name="order_type" value="Delivery" checked class="peer hidden" onchange="tkToggleAddress()">
+                        <div class="flex flex-col items-center gap-2 p-4 rounded-2xl border border-white/10 bg-[#0B0806] text-white/50 peer-checked:border-[#C09668] peer-checked:text-[#C09668] peer-checked:bg-[#C09668]/10 transition-all">
+                            <i class="fa-solid fa-motorcycle text-lg"></i>
+                            <span class="text-xs font-semibold">Delivery</span>
+                        </div>
+                    </label>
+
+                </div>
+            </div>
+
+            <!-- Contact Number -->
+            <div>
+                <label class="text-[10px] uppercase font-bold text-white/30 ml-2 tracking-widest">Contact Number</label>
+                <div class="relative mt-1">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-white/25">
+                        <i class="fa-solid fa-phone text-sm"></i>
+                    </span>
+                    <input type="tel" inputmode="numeric" name="contact" placeholder="09XX-XXX-XXXX" required
+                        class="w-full bg-[#0B0806] border border-white/10 rounded-2xl p-4 pl-11 text-white focus:border-[#C09668] outline-none transition-all">
+                </div>
+            </div>
+
+            <!-- Address (hidden/optional for Dine In & Take Out) -->
+            <div id="addressField" class="transition-all duration-300">
+                <label class="text-[10px] uppercase font-bold text-white/30 ml-2 tracking-widest">Address</label>
+                <div class="relative mt-1">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-white/25">
+                        <i class="fa-solid fa-location-dot text-sm"></i>
+                    </span>
+                    <input type="text" id="addressInput" name="address" placeholder="Unit, Street, City" required
+                        class="w-full bg-[#0B0806] border border-white/10 rounded-2xl p-4 pl-11 text-white focus:border-[#C09668] outline-none transition-all">
+                </div>
+            </div>
+
+            <!-- Payment Method (selectable cards) -->
+            <div>
+                <label class="text-[10px] uppercase font-bold text-white/30 ml-2 tracking-widest mb-2 block">Payment Method</label>
+                <div class="grid grid-cols-3 gap-3">
+
+                    <label class="cursor-pointer">
+                        <input type="radio" name="payment_method" value="Cash" checked class="peer hidden">
+                        <div class="flex flex-col items-center gap-2 p-4 rounded-2xl border border-white/10 bg-[#0B0806] text-white/50 peer-checked:border-[#C09668] peer-checked:text-[#C09668] peer-checked:bg-[#C09668]/10 transition-all">
+                            <i class="fa-solid fa-money-bill-wave text-lg"></i>
+                            <span class="text-xs font-semibold">Cash</span>
+                        </div>
+                    </label>
+
+                    <label class="cursor-pointer">
+                        <input type="radio" name="payment_method" value="GCash" class="peer hidden">
+                        <div class="flex flex-col items-center gap-2 p-4 rounded-2xl border border-white/10 bg-[#0B0806] text-white/50 peer-checked:border-[#C09668] peer-checked:text-[#C09668] peer-checked:bg-[#C09668]/10 transition-all">
+                            <i class="fa-solid fa-mobile-screen-button text-lg"></i>
+                            <span class="text-xs font-semibold">GCash</span>
+                        </div>
+                    </label>
+
+                    <label class="cursor-pointer">
+                        <input type="radio" name="payment_method" value="Maya" class="peer hidden">
+                        <div class="flex flex-col items-center gap-2 p-4 rounded-2xl border border-white/10 bg-[#0B0806] text-white/50 peer-checked:border-[#C09668] peer-checked:text-[#C09668] peer-checked:bg-[#C09668]/10 transition-all">
+                            <i class="fa-solid fa-wallet text-lg"></i>
+                            <span class="text-xs font-semibold">Maya</span>
+                        </div>
+                    </label>
+
+                </div>
+            </div>
+
+            <button type="submit"
+                class="w-full bg-[#C09668] hover:bg-[#A88157] text-[#0B0806] font-bold py-4 rounded-2xl transition-all active:scale-[0.98] mt-4 shadow-lg shadow-[#C09668]/20">
+                <i class="fa-solid fa-lock mr-2 text-sm opacity-70"></i>
+                Confirm &amp; Place Order
+            </button>
+
+            <p class="text-center text-white/20 text-[11px] mt-2">
+                Sa pag-click ng "Confirm & Place Order", kinukumpirma mo ang lahat ng detalye sa itaas.
+            </p>
+        </div>
+    </form>
+
+</div>
+
+<script>
+    // (added) Dine In / Take Out don't need a delivery address —
+    // hide the field and drop the 'required' so the form still submits cleanly
+    function tkToggleAddress() {
+        const selected = document.querySelector('input[name="order_type"]:checked');
+        const type = selected ? selected.value : "Delivery";
+        const field = document.getElementById("addressField");
+        const input = document.getElementById("addressInput");
+
+        if (type === "Delivery") {
+            field.style.maxHeight = "200px";
+            field.style.opacity = "1";
+            field.style.marginTop = "";
+            input.required = true;
+        } else {
+            field.style.maxHeight = "0px";
+            field.style.opacity = "0";
+            field.style.overflow = "hidden";
+            field.style.marginTop = "0px";
+            input.required = false;
+        }
+    }
+
+    // run once on load in case the browser restored a previous selection
+    tkToggleAddress();
+</script>
+
+{% endblock %}

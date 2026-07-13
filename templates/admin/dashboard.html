@@ -1,0 +1,75 @@
+{% extends 'admin/layout.html' %}
+{% set active = 'dashboard' %}
+{% block admin_content %}
+
+<div class="mb-8">
+    <h1 class="text-3xl font-bold text-white">Overview</h1>
+    <p class="text-white/40 text-sm mt-1">Snapshot ng buong Tara Kape operations mo.</p>
+</div>
+
+<!-- STAT CARDS -->
+<div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+
+    <div class="bg-[#0B0806]/60 border border-white/5 rounded-3xl p-6">
+        <div class="w-11 h-11 rounded-2xl bg-emerald-500/10 flex items-center justify-center mb-4">
+            <i class="fa-solid fa-peso-sign text-emerald-400"></i>
+        </div>
+        <p class="text-2xl font-bold text-white">₱{{ "%.2f"|format(total_sales) }}</p>
+        <p class="text-white/40 text-xs mt-1">Total Sales (Completed)</p>
+    </div>
+
+    <div class="bg-[#0B0806]/60 border border-white/5 rounded-3xl p-6">
+        <div class="w-11 h-11 rounded-2xl bg-[#C09668]/10 flex items-center justify-center mb-4">
+            <i class="fa-solid fa-receipt text-[#C09668]"></i>
+        </div>
+        <p class="text-2xl font-bold text-white">{{ total_orders }}</p>
+        <p class="text-white/40 text-xs mt-1">Total Orders</p>
+    </div>
+
+    <div class="bg-[#0B0806]/60 border border-white/5 rounded-3xl p-6">
+        <div class="w-11 h-11 rounded-2xl bg-amber-500/10 flex items-center justify-center mb-4">
+            <i class="fa-solid fa-clock text-amber-400"></i>
+        </div>
+        <p class="text-2xl font-bold text-white">{{ pending_orders }}</p>
+        <p class="text-white/40 text-xs mt-1">Pending Orders</p>
+    </div>
+
+    <div class="bg-[#0B0806]/60 border border-white/5 rounded-3xl p-6">
+        <div class="w-11 h-11 rounded-2xl bg-sky-500/10 flex items-center justify-center mb-4">
+            <i class="fa-solid fa-users text-sky-400"></i>
+        </div>
+        <p class="text-2xl font-bold text-white">{{ total_users }}</p>
+        <p class="text-white/40 text-xs mt-1">Registered Users</p>
+    </div>
+
+</div>
+
+<!-- BEST SELLERS -->
+<div class="bg-[#0B0806]/60 border border-white/5 rounded-[2rem] p-8">
+
+    <div class="flex items-center justify-between mb-6">
+        <h2 class="text-xl font-bold text-white">Best Sellers</h2>
+        <span class="text-white/30 text-xs uppercase tracking-widest font-bold">{{ total_products }} products total</span>
+    </div>
+
+    {% if best_sellers %}
+    <div class="space-y-3">
+        {% for item in best_sellers %}
+        <div class="flex items-center justify-between bg-white/5 rounded-2xl px-5 py-4">
+            <div class="flex items-center gap-3">
+                <span class="w-7 h-7 rounded-full bg-[#C09668]/15 text-[#C09668] text-xs font-bold flex items-center justify-center">
+                    {{ loop.index }}
+                </span>
+                <span class="text-white font-medium">{{ item.product_name }}</span>
+            </div>
+            <span class="text-white/50 text-sm">{{ item.total_qty }} sold</span>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-white/40 text-sm">Wala pang orders na naitala.</p>
+    {% endif %}
+
+</div>
+
+{% endblock %}

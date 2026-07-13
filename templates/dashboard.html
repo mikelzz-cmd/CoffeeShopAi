@@ -1,0 +1,464 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,400..700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Caveat:wght@500;600;700&display=swap');
+
+  .tk-page {
+    --espresso: #170F0A;
+    --espresso-light: #2A1B12;
+    --espresso-border: rgba(246, 238, 223, 0.09);
+    --cream: #F6EEDF;
+    --cream-card: #FFFBF3;
+    --ink: #2A1B12;
+    --ink-soft: rgba(42, 27, 18, 0.62);
+    --copper: #C97B3D;
+    --copper-dark: #A6602A;
+    --gold: #E7B65B;
+    --sage: #6F7D52;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+
+  .tk-page .tk-display {
+    font-family: 'Fraunces', serif;
+    font-optical-sizing: auto;
+  }
+
+  .tk-page .tk-script {
+    font-family: 'Caveat', cursive;
+  }
+
+  .tk-page .tk-tag {
+    font-family: 'Caveat', cursive;
+    font-weight: 600;
+    font-size: 1.5rem;
+    line-height: 1;
+    color: var(--gold);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transform: rotate(-2deg);
+  }
+  .tk-page .tk-tag::before {
+    content: "";
+    width: 26px;
+    height: 1px;
+    background: var(--copper);
+    display: inline-block;
+  }
+  .tk-page .tk-tag.on-cream { color: var(--copper-dark); }
+
+  .tk-page .tk-ring {
+    position: absolute;
+    border-radius: 9999px;
+    border: 6px solid var(--copper);
+    opacity: 0.06;
+    pointer-events: none;
+  }
+
+  .tk-page .tk-paper {
+    background: var(--cream);
+    color: var(--ink);
+    border-radius: 2.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .tk-page .tk-divider {
+    height: 2px;
+    width: 100%;
+    background: linear-gradient(90deg, transparent, var(--copper) 50%, transparent);
+    opacity: 0.35;
+  }
+
+  .tk-page input::placeholder,
+  .tk-page textarea::placeholder {
+    color: rgba(246, 238, 223, 0.35);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .tk-page .tk-rise {
+      animation: tk-rise 0.7s ease-out both;
+    }
+    @keyframes tk-rise {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  }
+</style>
+
+<div class="tk-page" style="background:var(--espresso);">
+<div class="max-w-7xl mx-auto px-6">
+
+    <!-- ================= HERO ================= -->
+    <section id="home" class="relative grid grid-cols-1 lg:grid-cols-2 gap-16 items-center py-24 overflow-hidden">
+
+        <div class="tk-ring" style="width:340px;height:340px;top:-60px;left:-120px;"></div>
+
+        <div class="relative tk-rise">
+
+            <span class="tk-tag mb-6">
+                Freshly brewed, everyday
+            </span>
+
+            <h1 class="tk-display text-6xl lg:text-7xl font-bold leading-[1.05] text-[var(--cream)] mt-4">
+                Tara,
+                <span class="block italic text-[var(--copper)]">Kape Tayo!</span>
+            </h1>
+
+            <p class="text-[var(--cream)]/60 text-lg leading-8 mt-7 max-w-xl">
+                Handcrafted coffee from premium, carefully selected beans, poured
+                alongside pastries baked fresh each morning. Every sip is brewed
+                with care, only here at
+                <span class="text-[var(--copper)] font-semibold">Tara Kape.</span>
+            </p>
+
+            <div class="flex flex-wrap gap-5 mt-10">
+
+                <a href="#menu"
+                    class="bg-[var(--copper)] hover:bg-[var(--copper-dark)] text-[#1A1006] font-bold px-8 py-4 rounded-xl transition duration-300">
+                    See the Menu
+                </a>
+
+                <a href="{{ url_for('chatbot') }}"
+                    class="border border-[var(--copper)]/60 text-[var(--copper)] hover:bg-[var(--copper)] hover:text-[#1A1006] font-semibold px-8 py-4 rounded-xl transition duration-300">
+                    <i class="fa-solid fa-robot mr-2"></i>
+                    Ask CoffeeBot
+                </a>
+
+            </div>
+
+        </div>
+
+        <div class="relative tk-rise" style="animation-delay:0.1s;">
+
+            <img
+                src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=900"
+                class="rounded-3xl shadow-2xl w-full h-[600px] object-cover">
+
+            <div class="absolute bottom-6 left-6 bg-[var(--espresso)]/90 backdrop-blur-lg border border-[var(--espresso-border)] rounded-2xl p-6">
+
+                <div class="tk-display text-3xl font-bold text-[var(--copper)]">
+                    ★ 4.9
+                </div>
+
+                <p class="text-[var(--cream)]/70 text-sm mt-2">
+                    Rated by over <b>5,000+</b> coffee lovers.
+                </p>
+
+            </div>
+
+            <div class="absolute -top-5 -right-5 bg-[var(--gold)] text-[#1A1006] rounded-full w-20 h-20 flex items-center justify-center tk-script text-lg font-semibold rotate-6 shadow-xl">
+                fave!
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- ================= WHY CHOOSE US ================= -->
+
+    <section class="py-20">
+
+        <div class="text-center mb-16">
+            <span class="tk-tag justify-center">Why choose us</span>
+            <h2 class="tk-display text-5xl font-bold text-[var(--cream)] mt-4">
+                More Than Just Coffee
+            </h2>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-8">
+
+            <div class="bg-[var(--espresso-light)] rounded-3xl p-8 border border-[var(--espresso-border)] text-center hover:border-[var(--copper)] hover:-translate-y-1 transition duration-300">
+
+                <div class="w-20 h-20 rounded-full bg-[var(--copper)]/15 flex items-center justify-center mx-auto mb-6">
+                    <i class="fa-solid fa-mug-hot text-3xl text-[var(--copper)]"></i>
+                </div>
+
+                <h3 class="tk-display text-white text-2xl font-bold mb-4">
+                    Premium Coffee
+                </h3>
+
+                <p class="text-[var(--cream)]/55 leading-7">
+                    Freshly brewed coffee made from carefully selected premium beans.
+                </p>
+
+            </div>
+
+            <div class="bg-[var(--espresso-light)] rounded-3xl p-8 border border-[var(--espresso-border)] text-center hover:border-[var(--copper)] hover:-translate-y-1 transition duration-300">
+
+                <div class="w-20 h-20 rounded-full bg-[var(--copper)]/15 flex items-center justify-center mx-auto mb-6">
+                    <i class="fa-solid fa-cookie-bite text-3xl text-[var(--copper)]"></i>
+                </div>
+
+                <h3 class="tk-display text-white text-2xl font-bold mb-4">
+                    Fresh Desserts
+                </h3>
+
+                <p class="text-[var(--cream)]/55 leading-7">
+                    Delicious cakes and pastries that perfectly match every coffee.
+                </p>
+
+            </div>
+
+            <div class="bg-[var(--espresso-light)] rounded-3xl p-8 border border-[var(--espresso-border)] text-center hover:border-[var(--copper)] hover:-translate-y-1 transition duration-300">
+
+                <div class="w-20 h-20 rounded-full bg-[var(--copper)]/15 flex items-center justify-center mx-auto mb-6">
+                    <i class="fa-solid fa-heart text-3xl text-[var(--copper)]"></i>
+                </div>
+
+                <h3 class="tk-display text-white text-2xl font-bold mb-4">
+                    Cozy Place
+                </h3>
+
+                <p class="text-[var(--cream)]/55 leading-7">
+                    Relax, unwind, and enjoy every moment with family and friends.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- ================= ABOUT ================= -->
+
+    <section id="about" class="py-20">
+
+        <div class="tk-paper p-8 lg:p-14">
+
+            <div class="tk-ring" style="width:260px;height:260px;bottom:-90px;right:-70px;"></div>
+
+            <div class="relative grid lg:grid-cols-2 gap-14 items-center">
+
+                <div>
+                    <img
+                        src="https://images.unsplash.com/photo-1445116572660-236099ec97a0?w=900"
+                        class="rounded-3xl shadow-xl w-full h-[500px] object-cover">
+                </div>
+
+                <div class="relative">
+
+                    <span class="tk-tag on-cream">About Tara Kape</span>
+
+                    <h2 class="tk-display text-5xl font-bold text-[var(--ink)] mt-5 mb-6">
+                        Where Every Cup
+                        Brings Comfort.
+                    </h2>
+
+                    <p class="text-[var(--ink-soft)] leading-8 mb-8">
+                        Tara Kape is dedicated to delivering quality handcrafted coffee,
+                        premium beverages, and freshly baked pastries. We believe every
+                        cup creates memorable moments with family, friends, and loved ones.
+                    </p>
+
+                    <div class="grid grid-cols-2 gap-5">
+
+                        <div class="bg-[var(--cream-card)] p-6 rounded-2xl border border-[var(--ink)]/10">
+                            <h3 class="tk-display text-[var(--copper-dark)] text-3xl font-bold">5000+</h3>
+                            <p class="text-[var(--ink-soft)] mt-2">Happy Customers</p>
+                        </div>
+
+                        <div class="bg-[var(--cream-card)] p-6 rounded-2xl border border-[var(--ink)]/10">
+                            <h3 class="tk-display text-[var(--copper-dark)] text-3xl font-bold">20+</h3>
+                            <p class="text-[var(--ink-soft)] mt-2">Coffee Variants</p>
+                        </div>
+
+                        <div class="bg-[var(--cream-card)] p-6 rounded-2xl border border-[var(--ink)]/10">
+                            <h3 class="tk-display text-[var(--copper-dark)] text-3xl font-bold">4.9★</h3>
+                            <p class="text-[var(--ink-soft)] mt-2">Customer Rating</p>
+                        </div>
+
+                        <div class="bg-[var(--cream-card)] p-6 rounded-2xl border border-[var(--ink)]/10">
+                            <h3 class="tk-display text-[var(--copper-dark)] text-3xl font-bold">100%</h3>
+                            <p class="text-[var(--ink-soft)] mt-2">Fresh Ingredients</p>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- ================= MENU ================= -->
+
+    <section id="menu" class="py-20">
+
+        <div class="text-center mb-12">
+            <span class="tk-tag justify-center">Our menu</span>
+            <h2 class="tk-display text-5xl font-bold text-[var(--cream)] mt-4">
+                Our Popular Coffee
+            </h2>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+
+            {% for product in products %}
+
+            <div class="bg-[var(--espresso-light)] rounded-2xl p-4 border border-[var(--espresso-border)] hover:border-[var(--copper)] transition duration-300 hover:-translate-y-2">
+
+                <img src="{{ image_url(product.image) }}"
+                    class="w-full h-48 object-cover rounded-xl mb-4">
+
+                <h3 class="tk-display text-xl font-bold text-white">
+                    {{ product.product_name }}
+                </h3>
+
+                <p class="text-sm text-[var(--cream)]/45 mt-2 h-12">
+                    {{ product.description }}
+                </p>
+
+                <div class="flex justify-between items-center mt-5">
+
+                    <span class="text-[var(--gold)] text-xl font-bold tk-display">
+                        ₱{{ "%.2f"|format(product.price) }}
+                    </span>
+
+                    <a href="{{ url_for('add_to_cart', product_id=product.id) }}"
+                        class="bg-[var(--copper)] hover:bg-[var(--copper-dark)] text-[#1A1006] px-4 py-2 rounded-lg font-semibold transition">
+                        <i class="fa-solid fa-cart-shopping"></i>
+                        Add
+                    </a>
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+    <!-- ================= REVIEWS ================= -->
+
+    <section class="py-20">
+
+        <div class="tk-paper p-8 lg:p-14">
+
+            <div class="text-center mb-12 relative">
+                <span class="tk-tag on-cream justify-center">Testimonials</span>
+                <h2 class="tk-display text-5xl font-bold text-[var(--ink)] mt-4">
+                    What Our Customers Say
+                </h2>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8 relative">
+
+                <div class="bg-[var(--cream-card)] p-8 rounded-3xl border border-[var(--ink)]/10">
+                    <div class="text-[var(--gold)] mb-4 tracking-widest">★★★★★</div>
+                    <p class="text-[var(--ink-soft)] italic">
+                        "The coffee tastes amazing and the atmosphere is very relaxing."
+                    </p>
+                    <h4 class="tk-display text-[var(--ink)] font-bold mt-5">— John D.</h4>
+                </div>
+
+                <div class="bg-[var(--cream-card)] p-8 rounded-3xl border border-[var(--ink)]/10">
+                    <div class="text-[var(--gold)] mb-4 tracking-widest">★★★★★</div>
+                    <p class="text-[var(--ink-soft)] italic">
+                        "CoffeeBot recommended the perfect drink for me!"
+                    </p>
+                    <h4 class="tk-display text-[var(--ink)] font-bold mt-5">— Maria S.</h4>
+                </div>
+
+                <div class="bg-[var(--cream-card)] p-8 rounded-3xl border border-[var(--ink)]/10">
+                    <div class="text-[var(--gold)] mb-4 tracking-widest">★★★★★</div>
+                    <p class="text-[var(--ink-soft)] italic">
+                        "Best coffee shop I've visited. Highly recommended!"
+                    </p>
+                    <h4 class="tk-display text-[var(--ink)] font-bold mt-5">— Kevin T.</h4>
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- ================= CONTACT ================= -->
+
+    <section id="contact" class="py-20">
+
+        <div class="text-center mb-12">
+            <span class="tk-tag justify-center">Contact us</span>
+            <h2 class="tk-display text-5xl font-bold text-[var(--cream)] mt-4">
+                We'd Love To Hear From You
+            </h2>
+        </div>
+
+        <div class="grid lg:grid-cols-2 gap-10">
+
+            <div class="bg-[var(--espresso-light)] rounded-3xl p-10 border border-[var(--espresso-border)]">
+
+                <h3 class="tk-display text-white text-3xl font-bold mb-8">
+                    Visit Tara Kape
+                </h3>
+
+                <div class="space-y-6 text-[var(--cream)]/70">
+
+                    <p>
+                        <i class="fa-solid fa-location-dot text-[var(--copper)] mr-3"></i>
+                        San Jose Del Monte, Bulacan
+                    </p>
+
+                    <p>
+                        <i class="fa-solid fa-phone text-[var(--copper)] mr-3"></i>
+                        +63 912 345 6789
+                    </p>
+
+                    <p>
+                        <i class="fa-solid fa-envelope text-[var(--copper)] mr-3"></i>
+                        tarakape@gmail.com
+                    </p>
+
+                    <p>
+                        <i class="fa-solid fa-clock text-[var(--copper)] mr-3"></i>
+                        Monday - Sunday
+                        <br>
+                        8:00 AM - 10:00 PM
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div class="bg-[var(--espresso-light)] rounded-3xl p-10 border border-[var(--espresso-border)]">
+
+                <form>
+
+                    <input
+                        type="text"
+                        placeholder="Your Name"
+                        class="w-full mb-5 bg-[var(--espresso)] border border-[var(--espresso-border)] focus:border-[var(--copper)] outline-none rounded-xl px-5 py-4 text-white transition">
+
+                    <input
+                        type="email"
+                        placeholder="Email Address"
+                        class="w-full mb-5 bg-[var(--espresso)] border border-[var(--espresso-border)] focus:border-[var(--copper)] outline-none rounded-xl px-5 py-4 text-white transition">
+
+                    <textarea
+                        rows="6"
+                        placeholder="Write your message..."
+                        class="w-full mb-5 bg-[var(--espresso)] border border-[var(--espresso-border)] focus:border-[var(--copper)] outline-none rounded-xl px-5 py-4 text-white transition"></textarea>
+
+                    <button
+                        class="w-full bg-[var(--copper)] hover:bg-[var(--copper-dark)] text-[#1A1006] font-bold py-4 rounded-xl transition">
+                        Send Message
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</div>
+</div>
+
+{% endblock %}

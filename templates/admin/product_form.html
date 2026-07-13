@@ -1,0 +1,155 @@
+{% extends 'admin/layout.html' %}
+{% block admin_content %}
+
+<div class="mb-8">
+    <a href="{{ url_for('admin_products') }}" class="inline-flex items-center gap-2 text-white/40 hover:text-white text-sm font-semibold transition mb-4">
+        <i class="fa-solid fa-arrow-left text-xs"></i> Back to Products
+    </a>
+    <h1 class="text-3xl font-bold text-white">{{ "Edit Product" if product else "Add Product" }}</h1>
+</div>
+
+<div class="bg-[#0B0806]/60 border border-white/5 rounded-[2rem] p-8 max-w-2xl">
+
+    <form action="{{ url_for('admin_edit_product', product_id=product.id) if product else url_for('admin_add_product') }}"
+          method="POST" enctype="multipart/form-data" class="space-y-6">
+
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        {% if product and product.image %}
+        <div>
+            <img src="{{ image_url(product.image) }}" class="w-32 h-32 object-cover rounded-2xl border border-white/10">
+        </div>
+        {% endif %}
+
+        <div>
+            <label class="text-xs text-white/40 uppercase font-bold tracking-widest ml-1">Product Photo</label>
+            <label class="mt-2 flex items-center gap-3 cursor-pointer bg-[#1a1714] hover:bg-[#25201c] transition text-white px-5 py-4 rounded-2xl border border-white/5 text-sm font-semibold">
+                <i class="fa-solid fa-image"></i>
+                {{ "Choose New Photo" if product else "Choose Photo" }}
+                <input type="file" name="image" accept="image/*" class="hidden">
+            </label>
+            <p class="text-[11px] text-white/30 mt-2">PNG, JPG, JPEG, GIF, or WEBP{{ " — leave blank to keep the current photo" if product else "" }}</p>
+        </div>
+
+        <div>
+            <label class="text-xs text-white/40 uppercase font-bold tracking-widest ml-1">Product Name</label>
+            <input type="text" name="product_name" required value="{{ product.product_name if product else '' }}"
+                   class="mt-2 w-full bg-[#1a1714] border border-white/5 rounded-2xl p-4 text-white focus:border-[#C09668] outline-none transition-all">
+        </div>
+
+        <div class="grid sm:grid-cols-2 gap-6">
+            <div>
+                <label class="text-xs text-white/40 uppercase font-bold tracking-widest ml-1">Category</label>
+                <input type="text" name="category" placeholder="e.g. Hot Coffee, Pastry" value="{{ product.category if product else '' }}"
+                       class="mt-2 w-full bg-[#1a1714] border border-white/5 rounded-2xl p-4 text-white focus:border-[#C09668] outline-none transition-all">
+            </div>
+            <div>
+                <label class="text-xs text-white/40 uppercase font-bold tracking-widest ml-1">Price (₱)</label>
+                <input type="number" step="0.01" min="0" name="price" required value="{{ product.price if product else '' }}"
+                       class="mt-2 w-full bg-[#1a1714] border border-white/5 rounded-2xl p-4 text-white focus:border-[#C09668] outline-none transition-all">
+            </div>
+        </div>
+
+        <div>
+            <label class="text-xs text-white/40 uppercase font-bold tracking-widest ml-1">Description</label>
+            <textarea name="description" rows="3"
+                      class="mt-2 w-full bg-[#1a1714] border border-white/5 rounded-2xl p-4 text-white focus:border-[#C09668] outline-none transition-all">{{ product.description if product else '' }}</textarea>
+        </div>
+
+        <div class="h-px bg-white/5"></div>
+
+        <!-- STOCK (added) -->
+        <div>
+            <label class="text-xs text-white/40 uppercase font-bold tracking-widest ml-1">Stock (available quantity)</label>
+            <div class="relative mt-2">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-white/30">
+                    <i class="fa-solid fa-boxes-stacked text-sm"></i>
+                </span>
+                <input type="number" step="1" min="0" name="stock" required value="{{ product.stock if product is not none and product.stock is not none else 0 }}"
+                       class="w-full bg-[#1a1714] border border-white/5 rounded-2xl p-4 pl-11 text-white focus:border-[#C09668] outline-none transition-all">
+            </div>
+            <p class="text-[11px] text-white/30 mt-1.5">Customers can't order more than what's in stock.</p>
+        </div>
+
+        <!-- INGREDIENTS (added) -->
+        <div>
+            <label class="text-xs text-white/40 uppercase font-bold tracking-widest ml-1">Ingredients</label>
+            <textarea name="ingredients" rows="2" placeholder="e.g. Espresso, steamed milk, vanilla syrup"
+                      class="mt-2 w-full bg-[#1a1714] border border-white/5 rounded-2xl p-4 text-white focus:border-[#C09668] outline-none transition-all">{{ product.ingredients if product and product.ingredients else '' }}</textarea>
+            <p class="text-[11px] text-white/30 mt-1.5">Ginagamit ito ni CoffeeBot pag tinanong ng customer.</p>
+        </div>
+
+        <div class="grid sm:grid-cols-3 gap-6">
+
+            <!-- CALORIES (added) -->
+            <div>
+                <label class="text-xs text-white/40 uppercase font-bold tracking-widest ml-1">Calories</label>
+                <input type="number" step="1" min="0" name="calories" placeholder="Optional"
+                       value="{{ product.calories if product and product.calories is not none else '' }}"
+                       class="mt-2 w-full bg-[#1a1714] border border-white/5 rounded-2xl p-4 text-white focus:border-[#C09668] outline-none transition-all">
+            </div>
+
+            <!-- CAFFEINE (added) -->
+            <div>
+                <label class="text-xs text-white/40 uppercase font-bold tracking-widest ml-1">Caffeine</label>
+                <select name="caffeine" class="mt-2 w-full bg-[#1a1714] border border-white/5 rounded-2xl p-4 text-white focus:border-[#C09668] outline-none transition-all">
+                    {% set current_caffeine = product.caffeine if product else '' %}
+                    <option value="" {% if not current_caffeine %}selected{% endif %}>—</option>
+                    <option value="None" {% if current_caffeine == 'None' %}selected{% endif %}>None</option>
+                    <option value="Low" {% if current_caffeine == 'Low' %}selected{% endif %}>Low</option>
+                    <option value="Medium" {% if current_caffeine == 'Medium' %}selected{% endif %}>Medium</option>
+                    <option value="High" {% if current_caffeine == 'High' %}selected{% endif %}>High</option>
+                </select>
+            </div>
+
+            <!-- SWEETNESS (added) -->
+            <div>
+                <label class="text-xs text-white/40 uppercase font-bold tracking-widest ml-1">Sweetness</label>
+                <select name="sweetness" class="mt-2 w-full bg-[#1a1714] border border-white/5 rounded-2xl p-4 text-white focus:border-[#C09668] outline-none transition-all">
+                    {% set current_sweetness = product.sweetness if product else '' %}
+                    <option value="" {% if not current_sweetness %}selected{% endif %}>—</option>
+                    <option value="Not Sweet" {% if current_sweetness == 'Not Sweet' %}selected{% endif %}>Not Sweet</option>
+                    <option value="Mild" {% if current_sweetness == 'Mild' %}selected{% endif %}>Mild</option>
+                    <option value="Medium" {% if current_sweetness == 'Medium' %}selected{% endif %}>Medium</option>
+                    <option value="Sweet" {% if current_sweetness == 'Sweet' %}selected{% endif %}>Sweet</option>
+                </select>
+            </div>
+
+        </div>
+
+        <!-- BESTSELLER (added) -->
+        <label class="flex items-center gap-3 cursor-pointer bg-[#1a1714] border border-white/5 rounded-2xl p-4">
+            <input type="checkbox" name="bestseller" class="peer hidden"
+                   {% if product and product.bestseller %}checked{% endif %}>
+            <span class="w-5 h-5 rounded-md border border-white/20 flex items-center justify-center peer-checked:bg-[#C09668] peer-checked:border-[#C09668] transition">
+                <i class="fa-solid fa-check text-[10px] text-[#0B0806] opacity-0 peer-checked:opacity-100"></i>
+            </span>
+            <span class="text-white text-sm font-semibold flex items-center gap-1.5">
+                <i class="fa-solid fa-star text-[#C09668] text-xs"></i>
+                Mark as Bestseller
+            </span>
+        </label>
+
+        <button type="submit" class="w-full bg-[#C09668] hover:bg-[#A88157] text-[#0B0806] font-bold py-4 rounded-2xl transition-all active:scale-[0.98]">
+            {{ "Save Changes" if product else "Add Product" }}
+        </button>
+
+    </form>
+
+</div>
+
+<script>
+    // (added) the checkbox itself is visually hidden; toggling its
+    // 'peer' state via clicking the label already handles the styling,
+    // this just keeps the checkmark icon in sync on page load
+    document.addEventListener("DOMContentLoaded", function () {
+        const checkbox = document.querySelector('input[name="bestseller"]');
+        if (checkbox) {
+            checkbox.addEventListener("change", function () {
+                // no-op: Tailwind peer-checked handles the visuals
+            });
+        }
+    });
+</script>
+
+{% endblock %}

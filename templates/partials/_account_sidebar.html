@@ -1,0 +1,80 @@
+<!--
+    Account sidebar navigation.
+    Used by profile.html and settings.html.
+    Set {% set active = 'profile' %} or {% set active = 'settings' %}
+    before including this file so the right link gets highlighted.
+-->
+
+<aside class="lg:col-span-1">
+
+    <div class="bg-[#0B0806]/60 backdrop-blur-2xl border border-white/5 rounded-[2rem] p-4 lg:sticky lg:top-28">
+
+        <!-- MINI PROFILE -->
+        <div class="flex items-center gap-3 px-3 py-3 mb-2 border-b border-white/5 pb-5">
+
+            {% if profile_image %}
+            <img src="{{ url_for('static', filename=profile_image) }}"
+                 class="w-11 h-11 rounded-full object-cover border-2 border-[#C09668]">
+            {% else %}
+            <div class="w-11 h-11 rounded-full bg-[#C09668] flex items-center justify-center border-2 border-[#C09668]">
+                <i class="fa-solid fa-user text-black text-sm"></i>
+            </div>
+            {% endif %}
+
+            <div class="min-w-0">
+                <p class="text-[10px] uppercase tracking-widest text-white/30 font-bold">Signed in as</p>
+                <p class="text-sm font-semibold text-white truncate">{{ fullname or "Guest" }}</p>
+            </div>
+
+        </div>
+
+        <!-- NAV LINKS -->
+        <nav class="space-y-1">
+
+            <a href="{{ url_for('profile') }}"
+               class="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-semibold transition
+               {% if active == 'profile' %}
+                   bg-[#C09668]/15 text-[#C09668] border border-[#C09668]/30
+               {% else %}
+                   text-white/60 border border-transparent hover:bg-white/5 hover:text-white
+               {% endif %}">
+                <i class="fa-solid fa-user w-5 text-center"></i>
+                Profile
+            </a>
+
+            <a href="{{ url_for('settings') }}"
+               class="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-semibold transition
+               {% if active == 'settings' %}
+                   bg-[#C09668]/15 text-[#C09668] border border-[#C09668]/30
+               {% else %}
+                   text-white/60 border border-transparent hover:bg-white/5 hover:text-white
+               {% endif %}">
+                <i class="fa-solid fa-gear w-5 text-center"></i>
+                Settings
+            </a>
+
+            <a href="{{ url_for('orders') }}"
+               class="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-semibold text-white/60 border border-transparent hover:bg-white/5 hover:text-white transition">
+                <i class="fa-solid fa-receipt w-5 text-center"></i>
+                Order History
+            </a>
+
+            <a href="{{ url_for('cart') }}"
+               class="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-semibold text-white/60 border border-transparent hover:bg-white/5 hover:text-white transition">
+                <i class="fa-solid fa-cart-shopping w-5 text-center"></i>
+                My Cart
+            </a>
+
+            <div class="h-px bg-white/5 my-2"></div>
+
+            <a href="{{ url_for('logout') }}"
+               class="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-semibold text-red-400/80 border border-transparent hover:bg-red-500/10 hover:text-red-400 transition">
+                <i class="fa-solid fa-right-from-bracket w-5 text-center"></i>
+                Logout
+            </a>
+
+        </nav>
+
+    </div>
+
+</aside>

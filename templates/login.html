@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="min-h-[calc(100vh-5rem)] flex items-center justify-center py-12 px-4 relative overflow-hidden"
+     style="background-image: radial-gradient(rgba(255,255,255,0.15) 1px, transparent 1px); background-size: 24px 24px;">
+
+    <!-- Central Auth Card -->
+    <div class="bg-white text-[#2B1B17] w-full max-w-md rounded-[2.5rem] p-8 md:p-10 shadow-2xl z-10 flex flex-col items-center">
+
+        <!-- Coffee Mug Icon Badge -->
+        <div class="w-16 h-16 bg-[#FDF9F5] rounded-2xl flex items-center justify-center mb-6 border border-[#EFE5DA]">
+            <i class="fa-solid fa-mug-hot text-2xl text-[#C09668]"></i>
+        </div>
+
+        <!-- Typography Heading -->
+        <h2 class="text-3xl font-bold tracking-tight text-center mb-2">Welcome Back!</h2>
+        <p class="text-sm text-gray-400 text-center mb-8 font-light">Come catch the scent of freshly brewed coffee.</p>
+
+        {% if next %}
+        <!-- lets the user know why they landed here mid-checkout -->
+        <div class="w-full mb-6 bg-[#FDF9F5] border border-[#EFE5DA] rounded-xl px-4 py-3 text-xs text-[#C09668] font-semibold text-center flex items-center justify-center gap-2">
+            <i class="fa-solid fa-lock"></i>
+            Please log in to complete your order.
+        </div>
+        {% endif %}
+
+        <!-- Form Elements -->
+        <form id="tkLoginForm" action="{{ url_for('login') }}" method="POST" class="w-full space-y-5">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <!-- carries the return destination through the POST -->
+            <input type="hidden" name="next" value="{{ next or '' }}">
+
+            <!-- Username Field -->
+            <div class="space-y-2">
+                <label for="tkUsername" class="text-xs font-bold tracking-wider text-gray-500 uppercase">Username</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">
+                        <i class="fa-solid fa-user text-sm"></i>
+                    </span>
+                    <input id="tkUsername" type="text" name="username" required placeholder="Enter your username"
+                           autocomplete="username"
+                           class="w-full bg-[#FDF9F5] text-gray-800 placeholder-gray-400/70 border border-[#EFE5DA] rounded-xl py-3.5 pl-11 pr-4 text-sm focus:outline-none focus:border-[#C09668] focus:ring-2 focus:ring-[#C09668]/15 transition-all font-medium">
+                </div>
+            </div>
+
+            <!-- Password Field -->
+            <div class="space-y-2">
+                <label for="tkPassword" class="text-xs font-bold tracking-wider text-gray-500 uppercase">Password</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">
+                        <i class="fa-solid fa-lock text-sm"></i>
+                    </span>
+                    <input id="tkPassword" type="password" name="password" required placeholder="••••••••"
+                           autocomplete="current-password"
+                           class="w-full bg-[#FDF9F5] text-gray-800 placeholder-gray-400/70 border border-[#EFE5DA] rounded-xl py-3.5 pl-11 pr-11 text-sm focus:outline-none focus:border-[#C09668] focus:ring-2 focus:ring-[#C09668]/15 transition-all font-medium">
+                    <!-- show/hide password toggle -->
+                    <button type="button" id="tkTogglePassword" aria-label="Show password"
+                            class="absolute inset-y-0 right-0 flex items-center pr-4 text-gray-400 hover:text-[#C09668] transition-colors">
+                        <i class="fa-solid fa-eye text-sm"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" id="tkLoginBtn"
+                    class="w-full bg-[#4A3525] hover:bg-[#38271A] disabled:opacity-60 disabled:cursor-not-allowed text-white text-base font-bold py-4 rounded-xl shadow-lg transition-all active:scale-[0.98] mt-4 flex items-center justify-center gap-2">
+                <span id="tkLoginBtnText">Log In</span>
+                <i id="tkLoginBtnIcon" class="fa-solid fa-arrow-right text-xs opacity-80"></i>
+            </button>
+        </form>
+
+        <!-- Redirect Link -->
+        <p class="text-sm text-gray-500 text-center mt-8 font-medium">
+            Don't have an account? <a href="{{ url_for('register') }}" class="text-[#C09668] hover:underline font-semibold">Create one</a>
+        </p>
+
+    </div>
+</div>
+
+<script>
+    (function () {
+        // show/hide password
+        const toggleBtn = document.getElementById('tkTogglePassword');
+        const passwordInput = document.getElementById('tkPassword');
+
+        toggleBtn.addEventListener('click', function () {
+            const isHidden = passwordInput.type === 'password';
+            passwordInput.type = isHidden ? 'text' : 'password';
+            toggleBtn.querySelector('i').classList.toggle('fa-eye', !isHidden);
+            toggleBtn.querySelector('i').classList.toggle('fa-eye-slash', isHidden);
+            toggleBtn.setAttribute('aria-label', isHidden ? 'Hide password' : 'Show password');
+        });
+
+        // loading state on submit, prevents double-submission
+        const form = document.getElementById('tkLoginForm');
+        const btn = document.getElementById('tkLoginBtn');
+        const btnText = document.getElementById('tkLoginBtnText');
+        const btnIcon = document.getElementById('tkLoginBtnIcon');
+
+        form.addEventListener('submit', function () {
+            btn.disabled = true;
+            btnText.textContent = 'Logging in...';
+            btnIcon.className = 'fa-solid fa-circle-notch fa-spin text-xs';
+        });
+    })();
+</script>
+{% endblock %}

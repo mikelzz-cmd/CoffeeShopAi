@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="max-w-4xl mx-auto px-6 py-12">
+    <!-- Header Section -->
+    <div class="mb-8">
+        <h1 class="text-4xl font-bold text-white mb-2">My Orders</h1>
+        <p class="text-white/50">View the status and details of your previous coffee orders.</p>
+    </div>
+
+    <!-- FILTER TABS -->
+    <div class="flex flex-wrap gap-2 mb-8">
+        {% set tabs = [
+            ('All', 'All', (status_counts.values() | sum) if status_counts else 0),
+            ('Pending', 'Pending', status_counts.get('Pending', 0)),
+            ('Preparing', 'Preparing', status_counts.get('Preparing', 0)),
+            ('Completed', 'Completed', status_counts.get('Completed', 0)),
+            ('Cancelled', 'Cancelled', status_counts.get('Cancelled', 0))
+        ] %}
+        {% for label, value, count in tabs %}
+        <a href="{{ url_for('orders', status=value) if value != 'All' else url_for('orders') }}"
+           class="px-4 py-2 rounded-xl text-sm font-semibold transition
+           {% if status_filter == value %}
+               bg-[#C09668] text-[#0B0806]
+           {% else %}
+               bg-white/5 text-white/50 hover:bg-white/10 hover:text-white
+           {% endif %}">
+            {{ label }}{% if count %} <span class="opacity-70">({{ count }})</span>{% endif %}
+        </a>
+        {% endfor %}
+    </div>
+
+    <!-- Orders Container -->
+    <div class="space-y-6">
+        {% if grouped_orders %}
+            {% for group in grouped_orders %}
+            <div class="bg-[#0B0806]/60 backdrop-blur-xl border border-white/5 rounded-[2rem] overflow-hidden hover:border-[#C09668]/30 transition-all">
+
+                <!-- SESSION HEADER -->
+                <div class="flex flex-wrap items-center justify-between gap-3 px-6 py-4 bg-white/5 border-b border-white/5">
+                    <div class="flex items-center gap-3 text-xs text-white/40">
+                        {% if group.timestamp %}
+                        <span><i class="fa-regular fa-clock mr-1.5"></i>{{ group.timestamp }}</span>
+                        {% endif %}
+                        {% if group.order_type %}
+                        <span>·</span>
+                        <span>{{ group.order_type }}</span>
+                        {% endif %}
+                        {% if group.payment_method %}
+                        <span>·</span>
+                        <span>{{ group.payment_method }}</span>
+                        {% endif %}
+                    </div>
+                    <span class="text-white font-bold">₱{{ "%.2f"|format(group.total) }}</span>
+                </div>
+
+                <!-- ITEMS -->
+                <div class="divide-y divide-white/5">
+                    {% for order in group.orders %}
+                    <div class="p-6">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+
+                            <div class="flex items-center gap-4">
+                                <div class="w-11 h-11 rounded-2xl bg-[#C09668]/10 flex items-center justify-center text-[#C09668] shrink-0">
+                                    <i class="fa-solid fa-mug-hot"></i>
+                                </div>
+                                <div>
+                                    <p class="text-white/30 text-[10px] uppercase tracking-widest font-bold">Order #{{ order.id }}</p>
+                                    <h3 class="text-white font-bold">{{ order.product_name }}</h3>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-5">
+                                <div class="text-right">
+                                    <p class="text-white font-semibold">₱{{ "%.2f"|format(order.total) }}</p>
+
+                                    {% if order.status == 'Pending' %}
+                                    <div class="flex items-center justify-end gap-2 mt-1">
+                                        <a href="{{ url_for('update_order_quantity', order_id=order.id, action='decrease') }}"
+                                           class="w-6 h-6 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center text-white/60 hover:text-white transition text-xs">
+                                            <i class="fa-solid fa-minus"></i>
+                                        </a>
+                                        <span class="text-white/60 text-xs w-14 text-center">Qty: {{ order.quantity }}</span>
+                                        <a href="{{ url_for('update_order_quantity', order_id=order.id, action='increase') }}"
+                                           class="w-6 h-6 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center text-white/60 hover:text-white transition text-xs">
+                                            <i class="fa-solid fa-plus"></i>
+                                        </a>
+                                    </div>
+                                    {% else %}
+                                    <p class="text-white/40 text-xs">Qty: {{ order.quantity }}</p>
+                                    {% endif %}
+                                </div>
+
+                                {% if order.status == 'Completed' %}
+                                    <span class="px-3 py-1.5 rounded-full bg-emerald-500/10 text-emerald-400 text-[10px] font-bold uppercase tracking-wider border border-emerald-500/20">Completed</span>
+                                {% elif order.status == 'Cancelled' %}
+                                    <span class="px-3 py-1.5 rounded-full bg-white/5 text-white/40 text-[10px] font-bold uppercase tracking-wider border border-white/10">Cancelled</span>
+                                {% elif order.status == 'Preparing' %}
+                                    <span class="px-3 py-1.5 rounded-full bg-sky-500/10 text-sky-400 text-[10px] font-bold uppercase tracking-wider border border-sky-500/20">Preparing</span>
+                                {% else %}
+                                    <span class="px-3 py-1.5 rounded-full bg-amber-500/10 text-amber-400 text-[10px] font-bold uppercase tracking-wider border border-amber-500/20">Pending</span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        {% if order.status == 'Pending' %}
+                        <div class="flex justify-end mt-3">
+                            <a href="{{ url_for('cancel_order', order_id=order.id) }}"
+                               onclick="return confirm('Cancel {{ order.product_name }}?');"
+                               class="inline-flex items-center gap-1.5 text-red-400/60 hover:text-red-400 text-[11px] font-bold uppercase tracking-wider transition">
+                                <i class="fa-solid fa-ban"></i>
+                                Cancel
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+
+            </div>
+            {% endfor %}
+        {% else %}
+            <!-- Empty State -->
+            <div class="text-center py-20 bg-[#0B0806]/60 border border-white/5 rounded-[2rem]">
+                <i class="fa-solid fa-receipt text-5xl text-white/10 mb-4"></i>
+                <h2 class="text-white font-bold text-xl">
+                    {% if status_filter != 'All' %}Walang {{ status_filter }} na orders{% else %}No orders yet{% endif %}
+                </h2>
+                <p class="text-white/40">Your order history will appear here once you make a purchase.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

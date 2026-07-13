@@ -1,0 +1,157 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="max-w-6xl mx-auto px-6 py-12">
+
+    <!-- PAGE HEADER -->
+    <div class="mb-8">
+        <p class="text-xs uppercase tracking-[3px] text-[#C09668] font-bold mb-2">My Account</p>
+        <h1 class="text-3xl font-bold text-white">Settings</h1>
+        <p class="text-white/40 text-sm mt-1">Manage your account security.</p>
+    </div>
+
+    <div class="grid lg:grid-cols-4 gap-8">
+
+        {% include 'partials/_account_sidebar.html' %}
+
+        <div class="lg:col-span-3 space-y-8">
+
+            <!-- CHANGE PASSWORD CARD -->
+            <div class="bg-[#0B0806]/60 backdrop-blur-2xl border border-white/5 rounded-[2.5rem] p-8 shadow-2xl">
+
+                <div class="flex items-start gap-4 mb-8">
+                    <div class="w-12 h-12 rounded-2xl bg-[#C09668]/15 flex items-center justify-center shrink-0">
+                        <i class="fa-solid fa-lock text-[#C09668]"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-white">Change Password</h2>
+                        <p class="text-white/40 text-sm mt-1">Choose a strong password you don't use elsewhere.</p>
+                    </div>
+                </div>
+
+                <form action="{{ url_for('change_password') }}" method="POST" class="space-y-6 max-w-xl">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                    <div>
+                        <label class="text-xs text-white/40 uppercase font-bold tracking-widest ml-1">Current Password</label>
+                        <div class="relative mt-2">
+                            <input type="password" name="current_password" required
+                                   id="current_password"
+                                   class="w-full bg-[#1a1714] border border-white/5 rounded-2xl p-4 pr-12 text-white focus:border-[#C09668] outline-none transition-all">
+                            <button type="button" onclick="tkTogglePassword('current_password', this)"
+                                    class="absolute right-4 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/70 transition">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="h-px bg-white/5"></div>
+
+                    <div>
+                        <label class="text-xs text-white/40 uppercase font-bold tracking-widest ml-1">New Password</label>
+                        <div class="relative mt-2">
+                            <input type="password" name="new_password" required
+                                   id="new_password"
+                                   class="w-full bg-[#1a1714] border border-white/5 rounded-2xl p-4 pr-12 text-white focus:border-[#C09668] outline-none transition-all">
+                            <button type="button" onclick="tkTogglePassword('new_password', this)"
+                                    class="absolute right-4 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/70 transition">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="text-xs text-white/40 uppercase font-bold tracking-widest ml-1">Confirm New Password</label>
+                        <div class="relative mt-2">
+                            <input type="password" name="confirm_password" required
+                                   id="confirm_password"
+                                   class="w-full bg-[#1a1714] border border-white/5 rounded-2xl p-4 pr-12 text-white focus:border-[#C09668] outline-none transition-all">
+                            <button type="button" onclick="tkTogglePassword('confirm_password', this)"
+                                    class="absolute right-4 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/70 transition">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button type="submit" id="tkPwBtn" class="w-full bg-[#C09668] hover:bg-[#A88157] text-[#0B0806] font-bold py-4 rounded-2xl transition-all active:scale-[0.98] flex items-center justify-center gap-2">
+                        <i id="tkPwSpinner" class="fa-solid fa-circle-notch fa-spin hidden"></i>
+                        <span id="tkPwLabel">Update Password</span>
+                    </button>
+
+                </form>
+
+            </div>
+
+            <!-- ACCOUNT INFO CARD -->
+            <div class="bg-[#0B0806]/60 backdrop-blur-2xl border border-white/5 rounded-[2.5rem] p-8 shadow-2xl">
+
+                <div class="flex items-start gap-4 mb-6">
+                    <div class="w-12 h-12 rounded-2xl bg-[#C09668]/15 flex items-center justify-center shrink-0">
+                        <i class="fa-solid fa-circle-info text-[#C09668]"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-white">Account</h2>
+                        <p class="text-white/40 text-sm mt-1">Signed in as <span class="text-white/70 font-semibold">{{ fullname }}</span></p>
+                    </div>
+                </div>
+
+                <a href="{{ url_for('profile') }}"
+                   class="inline-flex items-center gap-2 text-sm font-semibold text-[#C09668] hover:text-[#E7B65B] transition">
+                    Edit profile information
+                    <i class="fa-solid fa-arrow-right text-xs"></i>
+                </a>
+
+            </div>
+
+            <!-- DANGER ZONE CARD -->
+            <div class="bg-red-500/5 border border-red-500/10 rounded-[2.5rem] p-8">
+
+                <div class="flex items-start gap-4 mb-6">
+                    <div class="w-12 h-12 rounded-2xl bg-red-500/10 flex items-center justify-center shrink-0">
+                        <i class="fa-solid fa-triangle-exclamation text-red-400"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-red-400">Danger Zone</h2>
+                        <p class="text-red-400/40 text-sm mt-1">Sign out of your account on this device.</p>
+                    </div>
+                </div>
+
+                <a href="{{ url_for('logout') }}"
+                   class="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-semibold text-sm px-6 py-3 rounded-xl transition">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    Logout
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+    // (added) simple show/hide toggle for the password fields above
+    function tkTogglePassword(inputId, btn) {
+        const input = document.getElementById(inputId);
+        const icon = btn.querySelector("i");
+        if (input.type === "password") {
+            input.type = "text";
+            icon.classList.remove("fa-eye");
+            icon.classList.add("fa-eye-slash");
+        } else {
+            input.type = "password";
+            icon.classList.remove("fa-eye-slash");
+            icon.classList.add("fa-eye");
+        }
+    }
+
+    // (added) show a spinner and disable the button while the password form submits
+    document.querySelector('form[action="{{ url_for("change_password") }}"]').addEventListener("submit", function () {
+        const btn = document.getElementById("tkPwBtn");
+        document.getElementById("tkPwSpinner").classList.remove("hidden");
+        document.getElementById("tkPwLabel").textContent = "Updating...";
+        btn.disabled = true;
+        btn.classList.add("opacity-70", "cursor-not-allowed");
+    });
+</script>
+{% endblock %}

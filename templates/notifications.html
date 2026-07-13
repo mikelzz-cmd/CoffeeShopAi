@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="max-w-2xl mx-auto px-6 py-12">
+
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-white mb-2">Notifications</h1>
+        <p class="text-white/40 text-sm">Mga update tungkol sa iyong mga order.</p>
+    </div>
+
+    {% if all_notifications %}
+    <div class="space-y-3">
+        {% for n in all_notifications %}
+        <a href="{{ n.link or url_for('orders') }}"
+           class="block bg-[#0B0806]/60 border border-white/5 hover:border-[#C09668]/30 rounded-2xl p-5 transition">
+            <div class="flex items-start gap-4">
+                <div class="w-10 h-10 rounded-xl bg-[#C09668]/10 flex items-center justify-center text-[#C09668] shrink-0">
+                    <i class="fa-solid fa-bell"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-white text-sm">{{ n.message }}</p>
+                    {% if n.created_at %}
+                    <p class="text-white/30 text-xs mt-1">{{ n.created_at }}</p>
+                    {% endif %}
+                </div>
+                {% if not n.is_read %}
+                <span class="w-2 h-2 rounded-full bg-[#C09668] mt-1.5 shrink-0"></span>
+                {% endif %}
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-20 bg-[#0B0806]/60 border border-white/5 rounded-[2rem]">
+        <i class="fa-solid fa-bell-slash text-5xl text-white/10 mb-4"></i>
+        <h2 class="text-white font-bold text-xl">Walang notifications</h2>
+        <p class="text-white/40">Makikita mo dito ang mga update tungkol sa iyong mga order.</p>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

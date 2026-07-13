@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="max-w-md mx-auto py-16 px-6">
+
+    <!-- SUCCESS HEADER -->
+    <div class="text-center mb-8">
+        <div class="w-16 h-16 bg-green-500/10 text-green-500 rounded-full flex items-center justify-center mx-auto mb-4 border border-green-500/20">
+            <i class="fa-solid fa-check text-2xl"></i>
+        </div>
+        <h1 class="text-3xl font-bold text-white">Order Confirmed!</h1>
+        <p class="text-white/50 mt-2">Salamat sa pag-order sa Tara Kape.</p>
+    </div>
+
+    <!-- RECEIPT CARD -->
+    <div class="bg-white/5 border border-white/10 backdrop-blur-md shadow-2xl rounded-3xl p-8 relative overflow-hidden">
+
+        <!-- Subtle Glow Effect -->
+        <div class="absolute -top-24 -right-24 w-48 h-48 bg-[#C09668]/20 blur-3xl rounded-full pointer-events-none"></div>
+
+        <!-- HEADER -->
+        <div class="text-center border-b border-white/10 pb-6 mb-6 relative">
+            <h2 class="text-lg font-bold tracking-widest text-white">
+                <span class="text-[#C09668]">☕</span> TARA KAPE
+            </h2>
+            <p class="text-xs text-white/40 mt-1 uppercase tracking-widest">
+                Official Receipt
+            </p>
+        </div>
+
+        <!-- ORDER INFO -->
+        <div class="text-sm space-y-4 relative">
+
+            <div class="flex justify-between">
+                <span class="text-white/50">Order No:</span>
+                <span class="font-mono font-bold text-white">#{{ order_ids }}</span>
+            </div>
+
+            {% if orders[0].timestamp %}
+            <div class="flex justify-between">
+                <span class="text-white/50">Date:</span>
+                <span class="text-white/80">{{ orders[0].timestamp }}</span>
+            </div>
+            {% endif %}
+
+            {% if orders[0].order_type %}
+            <div class="flex justify-between">
+                <span class="text-white/50">Order Type:</span>
+                <span class="text-white">{{ orders[0].order_type }}</span>
+            </div>
+            {% endif %}
+
+            {% if orders[0].payment_method %}
+            <div class="flex justify-between">
+                <span class="text-white/50">Payment:</span>
+                <span class="text-white">{{ orders[0].payment_method }}</span>
+            </div>
+            {% endif %}
+
+        </div>
+
+        <div class="relative my-6">
+            <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-dashed border-white/20"></div></div>
+        </div>
+
+        <!-- ITEMS -->
+        <div class="space-y-3 relative">
+            {% for order in orders %}
+            <div class="flex justify-between text-sm">
+                <span class="text-white/70">{{ order.product_name }} <span class="text-white/30">x{{ order.quantity }}</span></span>
+                <span class="text-white font-medium">₱{{ "%.2f"|format(order.total) }}</span>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="relative my-6">
+            <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-dashed border-white/20"></div></div>
+        </div>
+
+        <div class="flex justify-between items-center relative">
+            <span class="text-white/50 text-sm">Grand Total</span>
+            <span class="text-[#C09668] font-bold text-lg">₱{{ "%.2f"|format(grand_total) }}</span>
+        </div>
+
+        <div class="flex justify-between items-center mt-4 relative">
+            <span class="text-white/50 text-sm">Status</span>
+
+            {% set status = orders[0].status %}
+            {% if status == 'Completed' %}
+            <span class="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-bold uppercase tracking-wider border border-emerald-500/20">{{ status }}</span>
+            {% elif status == 'Cancelled' %}
+            <span class="px-3 py-1 rounded-full bg-white/5 text-white/40 text-xs font-bold uppercase tracking-wider border border-white/10">{{ status }}</span>
+            {% elif status == 'Preparing' %}
+            <span class="px-3 py-1 rounded-full bg-sky-500/10 text-sky-400 text-xs font-bold uppercase tracking-wider border border-sky-500/20">{{ status }}</span>
+            {% else %}
+            <span class="px-3 py-1 rounded-full bg-amber-500/10 text-amber-400 text-xs font-bold uppercase tracking-wider border border-amber-500/20">{{ status }}</span>
+            {% endif %}
+        </div>
+
+        <!-- MESSAGE -->
+        <div class="text-center relative mt-8 pt-6 border-t border-white/10">
+            <h2 class="text-white font-bold text-lg">Order Successfully Placed</h2>
+            <p class="text-white/60 text-sm mt-2">Thank you for choosing Tara Kape.</p>
+
+            {% if orders[0].status == 'Pending' %}
+            <p class="text-[10px] uppercase text-[#C09668] font-bold mt-4 tracking-widest">
+                Est. Wait: 15–20 mins
+            </p>
+            {% endif %}
+        </div>
+
+        <div class="mt-6 pt-6 border-t border-white/10 text-center text-[10px] text-white/30 uppercase tracking-widest relative">
+            Please keep this receipt for reference
+        </div>
+
+    </div>
+
+    <!-- ACTIONS -->
+    <div class="mt-8 grid grid-cols-2 gap-4">
+        <a href="{{ url_for('orders') }}"
+           class="text-center bg-[#C09668] hover:bg-[#A88157] text-[#0B0806] py-3.5 rounded-xl font-bold transition-all active:scale-95 shadow-lg shadow-[#C09668]/20">
+            View Orders
+        </a>
+        <a href="{{ url_for('dashboard') }}"
+           class="text-center bg-white/5 hover:bg-white/10 text-white py-3.5 rounded-xl font-semibold transition-all border border-white/10">
+            Back to Menu
+        </a>
+    </div>
+
+</div>
+{% endblock %}

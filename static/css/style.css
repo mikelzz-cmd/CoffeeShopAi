@@ -1,0 +1,187 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* =========================
+   BODY BACKGROUND
+========================= */
+body {
+    background-color: #F5EFE7;
+    color: #2D2018;
+}
+
+/* =========================
+   SMOOTH SCROLL
+========================= */
+html {
+    scroll-behavior: smooth;
+}
+
+/* =========================
+   SCROLLBAR (STARBUCKS STYLE)
+========================= */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #F5EFE7;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #2D2018;
+    border-radius: 10px;
+}
+
+/* =========================
+   CARD ANIMATION
+========================= */
+.card-hover {
+    transition: all 0.3s ease;
+}
+
+.card-hover:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
+
+/* =========================
+   BUTTON ANIMATION
+========================= */
+button, a {
+    transition: all 0.2s ease;
+}
+
+button:hover, a:hover {
+    transform: scale(1.03);
+}
+
+/* =========================
+   GLASS EFFECT (LOGIN / REGISTER)
+========================= */
+.glass {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* =========================
+   INPUT STYLE
+========================= */
+input {
+    outline: none;
+    transition: 0.2s ease;
+}
+
+input:focus {
+    transform: scale(1.01);
+}
+
+/* =========================
+   CHAT ANIMATION
+========================= */
+.chat-bubble {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* =========================
+   LOADING DOTS
+========================= */
+.loading-dots::after {
+    content: '';
+    animation: dots 1.2s infinite;
+}
+
+@keyframes dots {
+    0% { content: '.'; }
+    33% { content: '..'; }
+    66% { content: '...'; }
+}
+
+/* =========================
+   PRIMARY SHADOW SYSTEM
+========================= */
+.shadow-soft {
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+
+.shadow-strong {
+    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+}
+
+/* =========================
+   COFFEE THEME UTILITIES
+========================= */
+.text-coffee {
+    color: #2D2018;
+}
+
+.text-latte {
+    color: #C8A27A;
+}
+
+.bg-coffee {
+    background-color: #2D2018;
+}
+
+.bg-latte {
+    background-color: #C8A27A;
+}
+
+/* =========================
+   HOVER EFFECT CARDS
+========================= */
+.menu-card {
+    transition: all 0.3s ease;
+}
+
+.menu-card:hover {
+    transform: translateY(-8px) scale(1.02);
+}
+
+/* =========================
+   BUTTON PRIMARY
+========================= */
+.btn-primary {
+    background: #2D2018;
+    color: white;
+    padding: 10px 18px;
+    border-radius: 999px;
+    font-weight: 500;
+}
+
+.btn-primary:hover {
+    background: #4A3B32;
+}
+
+/* =========================
+   PAGE FADE IN
+========================= */
+body {
+    animation: pageLoad 0.6s ease;
+}
+
+@keyframes pageLoad {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}

@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="min-h-[calc(100vh-5rem)] flex items-center justify-center py-12 px-4 relative overflow-hidden" 
+     style="background-image: radial-gradient(rgba(255,255,255,0.15) 1px, transparent 1px); background-size: 24px 24px;">
+    
+    <!-- Central Auth Card -->
+    <div class="bg-white text-[#2B1B17] w-full max-w-md rounded-[2.5rem] p-8 md:p-10 shadow-2xl z-10 flex flex-col items-center">
+        
+        <!-- Coffee Mug Icon Badge -->
+        <div class="w-16 h-16 bg-[#FDF9F5] rounded-2xl flex items-center justify-center mb-6 border border-[#EFE5DA]">
+            <i class="fa-solid fa-user-plus text-2xl text-[#C09668]"></i>
+        </div>
+
+        <!-- Typography Heading -->
+        <h2 class="text-3xl font-bold tracking-tight text-center mb-2">Sumali sa Tara Kape</h2>
+        <p class="text-sm text-gray-400 text-center mb-8 font-light">Gumawa ng account para makapag-order ng kape.</p>
+
+        <!-- Form Elements -->
+        <form action="{{ url_for('register') }}" method="POST" class="w-full space-y-4">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <!-- Name Field -->
+            <div class="space-y-1.5">
+                <label class="text-xs font-bold tracking-wider text-gray-500 uppercase">Buong Pangalan</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">
+                        <i class="fa-solid fa-id-card text-sm"></i>
+                    </span>
+                    <input type="text" name="fullname" required placeholder="Ipasok ang iyong pangalan"
+                           class="w-full bg-[#FDF9F5] text-gray-800 placeholder-gray-400/70 border border-[#EFE5DA] rounded-xl py-3 pl-11 pr-4 text-sm focus:outline-none focus:border-[#C09668] transition-colors font-medium">
+                </div>
+            </div>
+
+            <!-- Username Field -->
+            <div class="space-y-1.5">
+                <label class="text-xs font-bold tracking-wider text-gray-500 uppercase">Username</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">
+                        <i class="fa-solid fa-user text-sm"></i>
+                    </span>
+                    <input type="text" name="username" required placeholder="Pumili ng username"
+                           class="w-full bg-[#FDF9F5] text-gray-800 placeholder-gray-400/70 border border-[#EFE5DA] rounded-xl py-3 pl-11 pr-4 text-sm focus:outline-none focus:border-[#C09668] transition-colors font-medium">
+                </div>
+            </div>
+
+            <!-- Password Field -->
+            <div class="space-y-1.5">
+                <label class="text-xs font-bold tracking-wider text-gray-500 uppercase">Password</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">
+                        <i class="fa-solid fa-lock text-sm"></i>
+                    </span>
+                    <input type="password" name="password" required placeholder="Gumawa ng password"
+                           class="w-full bg-[#FDF9F5] text-gray-800 placeholder-gray-400/70 border border-[#EFE5DA] rounded-xl py-3 pl-11 pr-4 text-sm focus:outline-none focus:border-[#C09668] transition-colors font-medium">
+                </div>
+            </div>
+
+            <!-- Confirm Password Field (added — app.py requires this) -->
+            <div class="space-y-1.5">
+                <label class="text-xs font-bold tracking-wider text-gray-500 uppercase">Kumpirmahin ang Password</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">
+                        <i class="fa-solid fa-lock text-sm"></i>
+                    </span>
+                    <input type="password" name="confirm_password" required placeholder="Ulitin ang password"
+                           class="w-full bg-[#FDF9F5] text-gray-800 placeholder-gray-400/70 border border-[#EFE5DA] rounded-xl py-3 pl-11 pr-4 text-sm focus:outline-none focus:border-[#C09668] transition-colors font-medium">
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" 
+                    class="w-full bg-[#4A3525] hover:bg-[#38271A] text-white text-base font-bold py-4 rounded-xl shadow-lg transition-all active:scale-[0.98] mt-4">
+                Mag-register
+                <i class="fa-solid fa-check text-xs ml-1.5 opacity-80"></i>
+            </button>
+        </form>
+
+        <!-- Redirect Link -->
+        <p class="text-sm text-gray-500 text-center mt-6 font-medium">
+            May account ka na? <a href="{{ url_for('login') }}" class="text-[#C09668] hover:underline font-semibold">Mag-login dito</a>
+        </p>
+
+    </div>
+</div>
+{% endblock %}

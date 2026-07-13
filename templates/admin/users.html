@@ -1,0 +1,48 @@
+{% extends 'admin/layout.html' %}
+{% set active = 'users' %}
+{% block admin_content %}
+
+<div class="mb-8">
+    <h1 class="text-3xl font-bold text-white">Users</h1>
+    <p class="text-white/40 text-sm mt-1">Lahat ng mga rehistradong customers.</p>
+</div>
+
+{% if users %}
+<div class="bg-[#0B0806]/60 border border-white/5 rounded-[2rem] overflow-hidden">
+    <div class="divide-y divide-white/5">
+        {% for u in users %}
+        <div class="flex items-center justify-between px-6 py-4">
+            <div class="flex items-center gap-4">
+                {% if u.profile_image %}
+                <img src="{{ url_for('static', filename=u.profile_image) }}" class="w-10 h-10 rounded-full object-cover border-2 border-[#C09668]">
+                {% else %}
+                <div class="w-10 h-10 rounded-full bg-[#C09668] flex items-center justify-center border-2 border-[#C09668]">
+                    <i class="fa-solid fa-user text-black text-sm"></i>
+                </div>
+                {% endif %}
+                <div>
+                    <p class="text-white font-semibold">{{ u.fullname }}</p>
+                    <p class="text-white/40 text-xs">@{{ u.username }}</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+                {% if u.is_admin %}
+                <span class="px-3 py-1 rounded-full bg-[#C09668]/15 text-[#C09668] text-[10px] font-bold uppercase tracking-widest border border-[#C09668]/30">
+                    Admin
+                </span>
+                {% endif %}
+                <span class="text-white/20 text-xs font-mono">#{{ u.id }}</span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% else %}
+<div class="text-center py-20 bg-[#0B0806]/60 border border-white/5 rounded-[2rem]">
+    <i class="fa-solid fa-users text-5xl text-white/10 mb-4"></i>
+    <h2 class="text-white font-bold text-xl">Wala pang users</h2>
+</div>
+{% endif %}
+
+{% endblock %}

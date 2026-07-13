@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Tara Kape | Premium Coffee Shop</title>
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- FontAwesome -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet">
+
+    <style>
+
+        body{
+            font-family:'Plus Jakarta Sans',sans-serif;
+        }
+
+        .fade-in{
+            animation:fade .4s ease;
+        }
+
+        @keyframes fade{
+
+            from{
+                opacity:0;
+                transform:translateY(10px);
+            }
+
+            to{
+                opacity:1;
+                transform:translateY(0);
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body class="bg-[#0B0806] text-white min-h-screen flex flex-col">
+
+<!-- ================= NAVBAR ================= -->
+
+<nav class="sticky top-0 z-50 bg-[#0B0806]/90 backdrop-blur-xl border-b border-white/10">
+
+    <div class="max-w-7xl mx-auto h-20 px-6 flex items-center justify-between gap-4">
+
+        <!-- LOGO -->
+
+        <a href="{{ url_for('dashboard') }}"
+           class="flex items-center gap-3 shrink-0">
+
+            <div class="w-11 h-11 rounded-xl bg-[#C09668]/20 flex items-center justify-center">
+
+                <i class="fa-solid fa-mug-hot text-[#C09668] text-lg"></i>
+
+            </div>
+
+            <span class="text-xl font-bold">
+
+                Tara<span class="text-[#C09668]">Kape</span>
+
+            </span>
+
+        </a>
+
+        <!-- MENU -->
+
+        <div class="hidden md:flex items-center gap-1">
+
+            <a href="{{ url_for('dashboard') }}#home"
+               class="px-3.5 py-2 rounded-xl text-sm text-white/70 hover:text-white hover:bg-white/5 transition">
+
+                Home
+
+            </a>
+
+            <a href="{{ url_for('dashboard') }}#about"
+               class="px-3.5 py-2 rounded-xl text-sm text-white/70 hover:text-white hover:bg-white/5 transition">
+
+                About
+
+            </a>
+
+            <a href="{{ url_for('dashboard') }}#menu"
+               class="px-3.5 py-2 rounded-xl text-sm text-white/70 hover:text-white hover:bg-white/5 transition">
+
+                Menu
+
+            </a>
+
+            <a href="{{ url_for('dashboard') }}#contact"
+               class="px-3.5 py-2 rounded-xl text-sm text-white/70 hover:text-white hover:bg-white/5 transition">
+
+                Contact
+
+            </a>
+
+            <a href="{{ url_for('chatbot') }}"
+               class="px-3.5 py-2 rounded-xl text-sm text-[#C09668] hover:bg-[#C09668]/10 transition">
+
+                <i class="fa-solid fa-robot mr-1.5"></i>
+
+                CoffeeBot
+
+            </a>
+
+            {% if session.get('is_admin') %}
+            <!-- (added) only visible to admins -->
+            <a href="{{ url_for('admin_dashboard') }}"
+               class="px-3.5 py-2 rounded-xl text-sm text-amber-400 hover:bg-amber-400/10 transition">
+
+                <i class="fa-solid fa-user-shield mr-1.5"></i>
+
+                Admin Panel
+
+            </a>
+            {% endif %}
+
+        </div>
+
+        <!-- MOBILE MENU BUTTON (added) -->
+        <button onclick="document.getElementById('tkMobileMenu').classList.toggle('hidden')"
+                class="md:hidden w-11 h-11 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center order-last shrink-0">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+
+        <!-- RIGHT SIDE -->
+
+        <div class="flex items-center gap-2 shrink-0">
+
+            {% if session.get('user_id') %}
+
+            <!-- ICON GROUP: notifications + cart, visually paired -->
+            <div class="flex items-center gap-1 bg-white/[0.03] border border-white/5 rounded-2xl p-1">
+
+                <!-- NOTIFICATIONS -->
+                <div class="relative">
+                    <button onclick="document.getElementById('tkNotifDropdown').classList.toggle('hidden')"
+                            class="relative w-10 h-10 rounded-xl hover:bg-white/10 flex items-center justify-center transition">
+                        <i class="fa-solid fa-bell text-sm"></i>
+                        {% if unread_notifications > 0 %}
+                        <span class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-[#C09668] text-black text-[10px] font-bold flex items-center justify-center">
+                            {{ unread_notifications }}
+                        </span>
+                        {% endif %}
+                    </button>
+
+                    <div id="tkNotifDropdown" class="hidden absolute right-0 mt-3 w-80 bg-[#141110] border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-50">
+                        <div class="px-5 py-3 border-b border-white/5">
+                            <p class="text-white font-semibold text-sm">Notifications</p>
+                        </div>
+                        <div class="max-h-80 overflow-y-auto divide-y divide-white/5">
+                            {% if recent_notifications %}
+                                {% for n in recent_notifications %}
+                                <a href="{{ n.link or url_for('orders') }}" class="block px-5 py-3 hover:bg-white/5 transition">
+                                    <p class="text-white/80 text-xs leading-5">{{ n.message }}</p>
+                                    {% if not n.is_read %}<span class="inline-block w-1.5 h-1.5 rounded-full bg-[#C09668] mt-1"></span>{% endif %}
+                                </a>
+                                {% endfor %}
+                            {% else %}
+                                <p class="px-5 py-6 text-white/30 text-xs text-center">Walang notifications.</p>
+                            {% endif %}
+                        </div>
+                        <a href="{{ url_for('notifications') }}" class="block text-center py-3 text-[#C09668] text-xs font-bold uppercase tracking-widest hover:bg-white/5 transition">
+                            View All
+                        </a>
+                    </div>
+                </div>
+
+                <!-- CART -->
+                <a href="{{ url_for('cart') }}"
+                   class="relative w-10 h-10 rounded-xl hover:bg-white/10 flex items-center justify-center transition">
+
+                    <i class="fa-solid fa-cart-shopping text-sm"></i>
+
+                    {% if cart_count > 0 %}
+
+                    <span class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-[#C09668] text-black text-[10px] font-bold flex items-center justify-center">
+
+                        {{ cart_count }}
+
+                    </span>
+
+                    {% endif %}
+
+                </a>
+
+            </div>
+
+            <!-- divider between icon actions and the account cluster -->
+            <div class="hidden lg:block w-px h-8 bg-white/10 mx-1"></div>
+
+            <!-- ACCOUNT CLUSTER: single trigger, no duplicate profile links -->
+            <div class="relative">
+                <button onclick="document.getElementById('tkAccountDropdown').classList.toggle('hidden')"
+                        class="flex items-center gap-2.5 pl-1.5 pr-3 py-1.5 rounded-2xl hover:bg-white/5 transition group">
+
+                    {% if session.get('profile_image') %}
+
+                    <img src="{{ url_for('static', filename=session.get('profile_image')) }}"
+                         class="w-9 h-9 rounded-full object-cover border-2 border-[#C09668]">
+
+                    {% else %}
+
+                    <div class="w-9 h-9 rounded-full bg-[#C09668] flex items-center justify-center border-2 border-[#C09668]">
+
+                        <i class="fa-solid fa-user text-black text-xs"></i>
+
+                    </div>
+
+                    {% endif %}
+
+                    <span class="hidden lg:block text-sm font-semibold text-white/90">
+
+                        {{ session.get('fullname') }}
+
+                    </span>
+
+                    <i class="fa-solid fa-chevron-down text-[10px] text-white/30 group-hover:text-white/60 transition"></i>
+
+                </button>
+
+                <div id="tkAccountDropdown" class="hidden absolute right-0 mt-3 w-56 bg-[#141110] border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-50">
+
+                    <a href="{{ url_for('profile') }}" class="flex items-center gap-3 px-5 py-3.5 text-sm text-white/80 hover:bg-white/5 hover:text-white transition">
+                        <i class="fa-solid fa-user w-4 text-white/40"></i> My Profile
+                    </a>
+                    <a href="{{ url_for('orders') }}" class="flex items-center gap-3 px-5 py-3.5 text-sm text-white/80 hover:bg-white/5 hover:text-white transition">
+                        <i class="fa-solid fa-box-open w-4 text-white/40"></i> My Orders
+                    </a>
+
+                    <div class="h-px bg-white/5"></div>
+
+                    <a href="{{ url_for('logout') }}" class="flex items-center gap-3 px-5 py-3.5 text-sm text-red-400/80 hover:bg-red-500/10 hover:text-red-400 transition">
+                        <i class="fa-solid fa-right-from-bracket w-4"></i> Logout
+                    </a>
+
+                </div>
+            </div>
+
+            {% else %}
+
+            <a href="{{ url_for('login') }}"
+               class="px-5 py-2 rounded-xl bg-[#C09668] text-black font-bold text-sm hover:bg-[#A88157] transition">
+
+                Login
+
+            </a>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</nav>
+
+<!-- close dropdowns when clicking outside -->
+<script>
+    document.addEventListener('click', function (e) {
+        [['tkNotifDropdown', 2], ['tkAccountDropdown', 1]].forEach(function ([id, depth]) {
+            const panel = document.getElementById(id);
+            if (!panel || panel.classList.contains('hidden')) return;
+            let trigger = panel.previousElementSibling;
+            if (!panel.contains(e.target) && !(trigger && trigger.contains(e.target))) {
+                panel.classList.add('hidden');
+            }
+        });
+    });
+</script>
+
+<!-- MOBILE MENU PANEL (added) -->
+<div id="tkMobileMenu" class="hidden md:hidden bg-[#0B0806] border-b border-white/10 px-6 py-4 space-y-1">
+
+    <a href="{{ url_for('dashboard') }}#home" class="block px-4 py-3 rounded-xl hover:bg-white/5 text-white">Home</a>
+    <a href="{{ url_for('dashboard') }}#about" class="block px-4 py-3 rounded-xl hover:bg-white/5 text-white">About</a>
+    <a href="{{ url_for('dashboard') }}#menu" class="block px-4 py-3 rounded-xl hover:bg-white/5 text-white">Menu</a>
+    <a href="{{ url_for('dashboard') }}#contact" class="block px-4 py-3 rounded-xl hover:bg-white/5 text-white">Contact</a>
+    <a href="{{ url_for('chatbot') }}" class="block px-4 py-3 rounded-xl text-[#C09668] hover:bg-[#C09668]/10">
+        <i class="fa-solid fa-robot mr-2"></i> CoffeeBot
+    </a>
+
+    {% if session.get('is_admin') %}
+    <a href="{{ url_for('admin_dashboard') }}" class="block px-4 py-3 rounded-xl text-amber-400 hover:bg-amber-400/10">
+        <i class="fa-solid fa-user-shield mr-2"></i> Admin Panel
+    </a>
+    {% endif %}
+
+    <div class="h-px bg-white/5 my-2"></div>
+
+    {% if session.get('user_id') %}
+    <a href="{{ url_for('profile') }}" class="flex items-center gap-2 px-4 py-3 rounded-xl hover:bg-white/5 text-white">
+        <i class="fa-solid fa-user w-4"></i> My Profile
+    </a>
+    <a href="{{ url_for('orders') }}" class="flex items-center gap-2 px-4 py-3 rounded-xl hover:bg-white/5 text-white">
+        <i class="fa-solid fa-box-open w-4"></i> My Orders
+    </a>
+    <a href="{{ url_for('cart') }}" class="flex items-center gap-2 px-4 py-3 rounded-xl hover:bg-white/5 text-white">
+        <i class="fa-solid fa-cart-shopping w-4"></i> My Cart
+    </a>
+    <a href="{{ url_for('logout') }}" class="flex items-center gap-2 px-4 py-3 rounded-xl text-red-400 hover:bg-red-500/10">
+        <i class="fa-solid fa-right-from-bracket w-4"></i> Logout
+    </a>
+    {% else %}
+    <a href="{{ url_for('login') }}" class="block px-4 py-3 rounded-xl bg-[#C09668] text-black font-bold text-center">Login</a>
+    {% endif %}
+
+</div>
+
+<!-- ================= MAIN ================= -->
+
+<main class="flex-1 fade-in">
+
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+
+    <div class="max-w-7xl mx-auto px-6 pt-6">
+
+        {% for message in messages %}
+
+        <div class="mb-4 rounded-xl bg-[#C09668]/15 border border-[#C09668]/30 text-[#F8E6D1] px-5 py-4">
+
+            {{ message }}
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+    {% endif %}
+    {% endwith %}
+
+    {% block content %}
+    {% endblock %}
+
+</main>
+
+<!-- ================= FOOTER (added) ================= -->
+<footer class="border-t border-white/5 bg-[#0B0806]">
+    <div class="max-w-7xl mx-auto px-6 py-12">
+
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-10">
+
+            <div>
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-10 h-10 rounded-xl bg-[#C09668]/20 flex items-center justify-center">
+                        <i class="fa-solid fa-mug-hot text-[#C09668]"></i>
+                    </div>
+                    <span class="text-lg font-bold text-white">Tara<span class="text-[#C09668]">Kape</span></span>
+                </div>
+                <p class="text-white/40 text-sm leading-6">Handcrafted coffee at pastries, brewed with passion, para sa bawat customer namin.</p>
+            </div>
+
+            <div>
+                <p class="text-white text-sm font-bold uppercase tracking-widest mb-4">Quick Links</p>
+                <div class="space-y-2 text-sm">
+                    <a href="{{ url_for('dashboard') }}#home" class="block text-white/40 hover:text-[#C09668] transition">Home</a>
+                    <a href="{{ url_for('dashboard') }}#about" class="block text-white/40 hover:text-[#C09668] transition">About</a>
+                    <a href="{{ url_for('dashboard') }}#menu" class="block text-white/40 hover:text-[#C09668] transition">Menu</a>
+                    <a href="{{ url_for('chatbot') }}" class="block text-white/40 hover:text-[#C09668] transition">CoffeeBot</a>
+                </div>
+            </div>
+
+            <div>
+                <p class="text-white text-sm font-bold uppercase tracking-widest mb-4">Account</p>
+                <div class="space-y-2 text-sm">
+                    {% if session.get('user_id') %}
+                    <a href="{{ url_for('profile') }}" class="block text-white/40 hover:text-[#C09668] transition">My Profile</a>
+                    <a href="{{ url_for('orders') }}" class="block text-white/40 hover:text-[#C09668] transition">My Orders</a>
+                    <a href="{{ url_for('cart') }}" class="block text-white/40 hover:text-[#C09668] transition">My Cart</a>
+                    {% else %}
+                    <a href="{{ url_for('login') }}" class="block text-white/40 hover:text-[#C09668] transition">Login</a>
+                    <a href="{{ url_for('register') }}" class="block text-white/40 hover:text-[#C09668] transition">Register</a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div>
+                <p class="text-white text-sm font-bold uppercase tracking-widest mb-4">Contact</p>
+                <div class="space-y-2 text-sm text-white/40">
+                    <p><i class="fa-solid fa-location-dot text-[#C09668] mr-2"></i>San Jose Del Monte, Bulacan</p>
+                    <p><i class="fa-solid fa-phone text-[#C09668] mr-2"></i>+63 912 345 6789</p>
+                    <p><i class="fa-solid fa-envelope text-[#C09668] mr-2"></i>tarakape@gmail.com</p>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="border-t border-white/5 mt-10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-white/30 text-xs">
+            <p>&copy; 2026 Tara Kape. All rights reserved.</p>
+            <p>Monday – Sunday · 8:00 AM – 10:00 PM</p>
+        </div>
+
+    </div>
+</footer>
+
+</body>
+</html>
